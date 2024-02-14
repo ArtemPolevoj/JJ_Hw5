@@ -59,11 +59,22 @@ public class ClientManager implements Runnable {
                     }
                 }
             } else {
+                boolean exists = false;
                 for (ClientManager client : clients) {
                     if (client.name.contains(message.getFrom())) {
                         client.objectOutputStream.writeObject(message);
                         client.objectOutputStream.flush();
+                        exists = true;
                         break;
+                    }
+                }
+                if (!exists){
+                    for (ClientManager client : clients) {
+                        if (client.name.contains(message.getName())) {
+                            client.objectOutputStream.writeObject(new Message("", message.getFrom(), "не существует"));
+                            client.objectOutputStream.flush();
+                            break;
+                        }
                     }
                 }
             }
